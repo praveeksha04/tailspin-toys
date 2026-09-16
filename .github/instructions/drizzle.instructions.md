@@ -7,6 +7,14 @@ applyTo: 'db/**/*.ts,src/lib/*.ts'
 
 The app's data lives in a local SQLite database accessed through **Drizzle ORM** over Node.js's built-in `node:sqlite` driver. It is consumed at **build time** from Astro page frontmatter — there is no runtime API server. Schema changes are managed with **drizzle-kit** migrations.
 
+## Comment and Documentation Standards
+
+- Comments must explain intent, constraints, or the reason for a non-obvious decision. Do not use comments to paraphrase the code immediately below them.
+- Treat stale comments as defects. Update or remove a comment whenever the related behavior changes.
+- Every exported function in `db/**/*.ts` and `src/lib/**/*.ts` must have a TSDoc/JSDoc comment.
+- Exported function documentation must describe the function's purpose, every parameter with `@param`, and its return value with `@returns`. Document the injectable `db` parameter explicitly so the testability pattern remains clear.
+- Keep comments close to the code they explain and prefer a short explanation of why over a long description of mechanics.
+
 ## Layout
 
 - `db/schema.ts` — Drizzle table definitions (`publishers`, `categories`, `games`) and inferred row types. The single source of truth for the schema.
@@ -51,6 +59,8 @@ export async function getAllGameIds(db: Database): Promise<number[]> {
 }
 ```
 
+- Use four-space indentation, single quotes, semicolons, and trailing commas in multiline TypeScript, matching the existing codebase.
+- Add explicit parameter and return types to exported functions. ESLint enforces explicit module-boundary types for the data layer.
 - Always `order by` a stable column (title) so static builds are deterministic.
 - Map raw rows to the app-facing `Game`/`Publisher`/`Category` types in one place; don't leak Drizzle row shapes into components.
 - Keep ordering/lookup logic in `games.ts`, not in pages.
